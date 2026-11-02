@@ -37,4 +37,23 @@ Public Class ClienteDAO
 
     End Function
 
+
+    Public Shared Sub InsertarCliente(ClienteNuevo As Cliente)
+        Dim query As String = "INSERT INTO Clientes (Nombre, Apellido, Correo, Telefono) VALUES (@Nombre, @Apellido, @Correo, @Telefono)"
+
+        Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
+            Using comando As New SqlCommand(query, conexion)
+                comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 100).Value = ClienteNuevo.Nombre
+                comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 100).Value = ClienteNuevo.Apellido
+                comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteNuevo.Correo
+                comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 20).Value = If(String.IsNullOrWhiteSpace(ClienteNuevo.Telefono), CType(DBNull.Value, Object), ClienteNuevo.Telefono)
+
+                conexion.Open()
+                comando.ExecuteNonQuery()
+            End Using
+        End Using
+
+    End Sub
+
+
 End Class
