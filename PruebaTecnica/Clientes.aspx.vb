@@ -28,6 +28,63 @@
 
         ClienteDAO.InsertarCliente(clienteNuevo)
 
+        Response.Redirect("Clientes.aspx")
+
+    End Sub
+
+    Protected Sub gvClientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
+
+        Dim idCliente As Integer = Convert.ToInt32(gvClientes.DataKeys(e.RowIndex).Value)
+
+        ClienteDAO.EliminarCliente(idCliente)
+
+        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
+        gvClientes.DataBind()
+
+    End Sub
+
+    Protected Sub gvClientes_RowEditing(sender As Object, e As GridViewEditEventArgs)
+
+        gvClientes.EditIndex = e.NewEditIndex
+
+        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
+        gvClientes.DataBind()
+
+    End Sub
+
+    Protected Sub gvClientes_RowCancelingEdit(sender As Object, e As GridViewCancelEditEventArgs)
+
+        gvClientes.EditIndex = -1
+
+        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
+        gvClientes.DataBind()
+
+    End Sub
+
+    Protected Sub gvClientes_RowUpdating(sender As Object, e As GridViewUpdateEventArgs)
+
+        Dim fila As GridViewRow = gvClientes.Rows(e.RowIndex)
+
+        Dim clienteActualizado As New Cliente()
+
+        clienteActualizado.IdCliente = Convert.ToInt32(gvClientes.DataKeys(e.RowIndex).Value)
+
+        clienteActualizado.Nombre = CType(fila.Cells(1).Controls(0), TextBox).Text.Trim()
+        clienteActualizado.Apellido = CType(fila.Cells(2).Controls(0), TextBox).Text.Trim()
+        clienteActualizado.Correo = CType(fila.Cells(3).Controls(0), TextBox).Text.Trim()
+        clienteActualizado.Telefono = CType(fila.Cells(4).Controls(0), TextBox).Text.Trim()
+
+        If String.IsNullOrWhiteSpace(clienteActualizado.Nombre) OrElse
+           String.IsNullOrWhiteSpace(clienteActualizado.Apellido) OrElse
+           String.IsNullOrWhiteSpace(clienteActualizado.Correo) Then
+
+            Return
+        End If
+
+        ClienteDAO.ActualizarCliente(clienteActualizado)
+
+        gvClientes.EditIndex = -1
+
         gvClientes.DataSource = ClienteDAO.ObtenerClientes()
         gvClientes.DataBind()
 

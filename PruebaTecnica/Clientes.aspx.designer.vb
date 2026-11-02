@@ -23,6 +23,51 @@ Partial Public Class Clientes
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
 
     '''<summary>
+    '''txtNombre control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtNombre As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''txtApellido control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtApellido As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''txtCorreo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtCorreo As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''txtTelefono control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtTelefono As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''btnGuardar control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnGuardar As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
     '''gvClientes control.
     '''</summary>
     '''<remarks>
@@ -30,11 +75,4 @@ Partial Public Class Clientes
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents gvClientes As Global.System.Web.UI.WebControls.GridView
-    Protected WithEvents txtNombre As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtApellido As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtCorreo As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtTelefono As Global.System.Web.UI.WebControls.TextBox
-    Protected WithEvents btnGuardar As Global.System.Web.UI.WebControls.Button
-
-
 End Class

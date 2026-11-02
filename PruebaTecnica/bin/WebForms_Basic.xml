@@ -46,6 +46,51 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:PruebaTecnica.Clientes._txtNombre">
+<summary>
+txtNombre control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:PruebaTecnica.Clientes._txtApellido">
+<summary>
+txtApellido control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:PruebaTecnica.Clientes._txtCorreo">
+<summary>
+txtCorreo control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:PruebaTecnica.Clientes._txtTelefono">
+<summary>
+txtTelefono control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:PruebaTecnica.Clientes._btnGuardar">
+<summary>
+btnGuardar control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:PruebaTecnica.Clientes._gvClientes">
 <summary>
 gvClientes control.

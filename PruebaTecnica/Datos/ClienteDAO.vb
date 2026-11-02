@@ -55,5 +55,32 @@ Public Class ClienteDAO
 
     End Sub
 
+    Public Shared Sub EliminarCliente(idCliente As Integer)
+        Dim query As String = "DELETE FROM Clientes WHERE idCliente = @IdCliente"
+        Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
+            Using comando As New SqlCommand(query, conexion)
+                comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente
+                conexion.Open()
+                comando.ExecuteNonQuery()
+            End Using
+        End Using
+    End Sub
+
+    Public Shared Sub ActualizarCliente(ClienteActualizado As Cliente)
+        Dim query As String = "UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Correo = @Correo, Telefono = @Telefono WHERE IdCliente = @IdCliente"
+        Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
+            Using comando As New SqlCommand(query, conexion)
+                comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = ClienteActualizado.IdCliente
+                comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value = ClienteActualizado.Nombre
+                comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 50).Value = ClienteActualizado.Apellido
+                comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteActualizado.Correo
+                comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 35).Value = If(String.IsNullOrWhiteSpace(ClienteActualizado.Telefono), CType(DBNull.Value, Object), ClienteActualizado.Telefono)
+                conexion.Open()
+                comando.ExecuteNonQuery()
+                comando.ExecuteNonQuery()
+            End Using
+        End Using
+    End Sub
+
 
 End Class
