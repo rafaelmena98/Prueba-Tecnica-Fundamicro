@@ -1,1 +1,25 @@
 SQLQuery*.sql
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+
+# Compilacion
+bin/
+obj/
+Debug/
+Release/
+
+# Paquetes temporales
+packages/
+
+# Archivos locales
+*.log
+*.tmp
+*.bak
+
+# Configuraciones sensibles
+Web.Debug.config
+Web.Release.config
