@@ -1,21 +1,75 @@
-﻿Public Class Clientes
+﻿
+Imports System.Text.RegularExpressions
+
+Public Class Clientes
     Inherits System.Web.UI.Page
+
+    Protected Overrides Sub OnInit(e As EventArgs)
+
+        If Session("IdUsuario") Is Nothing Then
+            Response.Redirect("~/Login.aspx")
+            Return
+        End If
+
+        MyBase.OnInit(e)
+
+    End Sub
+
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         If Not IsPostBack Then
-            gvClientes.DataSource = ClienteDAO.ObtenerClientes()
-            gvClientes.DataBind()
+            CargarClientes()
         End If
 
     End Sub
 
+
+    Private Sub CargarClientes()
+
+        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
+        gvClientes.DataBind()
+
+    End Sub
+
+
+    Private Function DatosValidos(clienteActual As Cliente) As Boolean
+
+        If String.IsNullOrWhiteSpace(clienteActual.Nombre) OrElse
+           String.IsNullOrWhiteSpace(clienteActual.Apellido) OrElse
+           String.IsNullOrWhiteSpace(clienteActual.Correo) Then
+
+            Return False
+
+        End If
+
+        If clienteActual.Nombre.Length > 100 OrElse
+           clienteActual.Apellido.Length > 100 OrElse
+           clienteActual.Correo.Length > 150 OrElse
+           (clienteActual.Telefono IsNot Nothing AndAlso
+            clienteActual.Telefono.Length > 35) Then
+
+            Return False
+
+        End If
+
+        If Not Regex.IsMatch(clienteActual.Correo,
+                             "^[^@\s]+@[^@\s]+\.[^@\s]+$") Then
+
+            Return False
+
+        End If
+
+        Return True
+
+    End Function
+
+
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs)
 
-        If String.IsNullOrWhiteSpace(txtNombre.Text) OrElse
-           String.IsNullOrWhiteSpace(txtApellido.Text) OrElse
-           String.IsNullOrWhiteSpace(txtCorreo.Text) Then
+        Page.Validate("GuardarCliente")
 
+        If Not Page.IsValid Then
             Return
         End If
 
@@ -26,40 +80,51 @@
         clienteNuevo.Correo = txtCorreo.Text.Trim()
         clienteNuevo.Telefono = txtTelefono.Text.Trim()
 
-        ClienteDAO.InsertarCliente(clienteNuevo)
+        If Not DatosValidos(clienteNuevo) Then
+            Return
+        End If
 
-        Response.Redirect("Clientes.aspx")
+        Dim idUsuario As Integer = Convert.ToInt32(Session("IdUsuario"))
+        Dim nombreUsuario As String = Session("NombreUsuario").ToString()
+
+        ClienteDAO.InsertarCliente(clienteNuevo, idUsuario, nombreUsuario)
+
+        Response.Redirect("~/Clientes.aspx")
 
     End Sub
+
 
     Protected Sub gvClientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
 
         Dim idCliente As Integer = Convert.ToInt32(gvClientes.DataKeys(e.RowIndex).Value)
 
-        ClienteDAO.EliminarCliente(idCliente)
+        Dim idUsuario As Integer = Convert.ToInt32(Session("IdUsuario"))
+        Dim nombreUsuario As String = Session("NombreUsuario").ToString()
 
-        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
-        gvClientes.DataBind()
+        ClienteDAO.EliminarCliente(idCliente, idUsuario, nombreUsuario)
+
+        CargarClientes()
 
     End Sub
+
 
     Protected Sub gvClientes_RowEditing(sender As Object, e As GridViewEditEventArgs)
 
         gvClientes.EditIndex = e.NewEditIndex
 
-        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
-        gvClientes.DataBind()
+        CargarClientes()
 
     End Sub
+
 
     Protected Sub gvClientes_RowCancelingEdit(sender As Object, e As GridViewCancelEditEventArgs)
 
         gvClientes.EditIndex = -1
 
-        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
-        gvClientes.DataBind()
+        CargarClientes()
 
     End Sub
+
 
     Protected Sub gvClientes_RowUpdating(sender As Object, e As GridViewUpdateEventArgs)
 
@@ -74,19 +139,29 @@
         clienteActualizado.Correo = CType(fila.Cells(3).Controls(0), TextBox).Text.Trim()
         clienteActualizado.Telefono = CType(fila.Cells(4).Controls(0), TextBox).Text.Trim()
 
-        If String.IsNullOrWhiteSpace(clienteActualizado.Nombre) OrElse
-           String.IsNullOrWhiteSpace(clienteActualizado.Apellido) OrElse
-           String.IsNullOrWhiteSpace(clienteActualizado.Correo) Then
-
+        If Not DatosValidos(clienteActualizado) Then
             Return
         End If
 
-        ClienteDAO.ActualizarCliente(clienteActualizado)
+        Dim idUsuario As Integer = Convert.ToInt32(Session("IdUsuario"))
+        Dim nombreUsuario As String = Session("NombreUsuario").ToString()
+
+        ClienteDAO.ActualizarCliente(clienteActualizado, idUsuario, nombreUsuario)
 
         gvClientes.EditIndex = -1
 
-        gvClientes.DataSource = ClienteDAO.ObtenerClientes()
-        gvClientes.DataBind()
+        CargarClientes()
+
+    End Sub
+
+
+    Protected Sub btnCerrarSesion_Click(sender As Object, e As EventArgs)
+
+        Session.Clear()
+        Session.Abandon()
+
+        Response.Redirect("~/Login.aspx", False)
+        Context.ApplicationInstance.CompleteRequest()
 
     End Sub
 

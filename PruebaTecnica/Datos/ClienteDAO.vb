@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Collections.Generic
+Imports System.EnterpriseServices
 Public Class ClienteDAO
     Public Shared Function ObtenerClientes() As List(Of Cliente)
         Dim Lista As New List(Of Cliente)()
@@ -38,48 +39,155 @@ Public Class ClienteDAO
     End Function
 
 
-    Public Shared Sub InsertarCliente(ClienteNuevo As Cliente)
-        Dim query As String = "INSERT INTO Clientes (Nombre, Apellido, Correo, Telefono) VALUES (@Nombre, @Apellido, @Correo, @Telefono)"
+    Public Shared Sub InsertarCliente(ClienteNuevo As Cliente,
+                                      idUsuario As Integer,
+                                      nombreUsuario As String)
+        Dim query As String = "INSERT INTO Clientes (Nombre, Apellido, Correo, Telefono) " &
+                      "OUTPUT INSERTED.IdCliente " &
+                      "VALUES (@Nombre, @Apellido, @Correo, @Telefono)"
 
         Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
-            Using comando As New SqlCommand(query, conexion)
-                comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 100).Value = ClienteNuevo.Nombre
-                comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 100).Value = ClienteNuevo.Apellido
-                comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteNuevo.Correo
-                comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 20).Value = If(String.IsNullOrWhiteSpace(ClienteNuevo.Telefono), CType(DBNull.Value, Object), ClienteNuevo.Telefono)
+            conexion.Open()
+            Using transaccion As SqlTransaction = conexion.BeginTransaction()
+                Try
+                    Using comando As New SqlCommand(query, conexion, transaccion)
+                        comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value = ClienteNuevo.Nombre
+                        comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 50).Value = ClienteNuevo.Apellido
+                        comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteNuevo.Correo
+                        comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 35).Value = If(String.IsNullOrWhiteSpace(ClienteNuevo.Telefono), CType(DBNull.Value, Object), ClienteNuevo.Telefono)
 
-                conexion.Open()
-                comando.ExecuteNonQuery()
+
+                        Dim idNuevoCliente As Integer = Convert.ToInt32(comando.ExecuteScalar())
+                        ClienteNuevo.IdCliente = idNuevoCliente
+
+                    End Using
+
+                    BitacoraDAO.RegistrarAccion(
+                        idUsuario,
+                        nombreUsuario,
+                        ClienteNuevo.IdCliente,
+                        "INSERTAR",
+                        conexion,
+                        transaccion
+                    )
+
+                    transaccion.Commit()
+
+                Catch
+                    transaccion.Rollback()
+                    Throw
+
+                End Try
             End Using
         End Using
 
     End Sub
 
-    Public Shared Sub EliminarCliente(idCliente As Integer)
-        Dim query As String = "DELETE FROM Clientes WHERE idCliente = @IdCliente"
+
+    Public Shared Sub EliminarCliente(idCliente As Integer,
+                                  idUsuario As Integer,
+                                  nombreUsuario As String)
+
+        Dim query As String = "DELETE FROM Clientes WHERE IdCliente = @IdCliente"
+
         Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
-            Using comando As New SqlCommand(query, conexion)
-                comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente
-                conexion.Open()
-                comando.ExecuteNonQuery()
+
+            conexion.Open()
+
+            Using transaccion As SqlTransaction = conexion.BeginTransaction()
+
+                Try
+
+                    Dim filasAfectadas As Integer
+
+                    Using comando As New SqlCommand(query, conexion, transaccion)
+
+                        comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente
+
+                        filasAfectadas = comando.ExecuteNonQuery()
+
+                    End Using
+
+                    If filasAfectadas <> 1 Then
+                        Throw New InvalidOperationException("No se pudo eliminar el cliente.")
+                    End If
+
+                    BitacoraDAO.RegistrarAccion(
+                    idUsuario,
+                    nombreUsuario,
+                    idCliente,
+                    "ELIMINAR",
+                    conexion,
+                    transaccion
+                )
+
+                    transaccion.Commit()
+
+                Catch
+                    transaccion.Rollback()
+                    Throw
+                End Try
+
             End Using
+
         End Using
+
     End Sub
 
-    Public Shared Sub ActualizarCliente(ClienteActualizado As Cliente)
-        Dim query As String = "UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Correo = @Correo, Telefono = @Telefono WHERE IdCliente = @IdCliente"
+
+    Public Shared Sub ActualizarCliente(ClienteActualizado As Cliente,
+                                        idUsuario As Integer,
+                                        nombreUsuario As String)
+        Dim query As String = "UPDATE Clientes SET Nombre = @Nombre, " &
+                          "Apellido = @Apellido, Correo = @Correo, " &
+                          "Telefono = @Telefono WHERE IdCliente = @IdCliente"
+
         Using conexion As SqlConnection = ConexionDB.ObtenerConexion()
-            Using comando As New SqlCommand(query, conexion)
-                comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = ClienteActualizado.IdCliente
-                comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value = ClienteActualizado.Nombre
-                comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 50).Value = ClienteActualizado.Apellido
-                comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteActualizado.Correo
-                comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 35).Value = If(String.IsNullOrWhiteSpace(ClienteActualizado.Telefono), CType(DBNull.Value, Object), ClienteActualizado.Telefono)
-                conexion.Open()
-                comando.ExecuteNonQuery()
-                comando.ExecuteNonQuery()
+
+            conexion.Open()
+
+            Using transaccion As SqlTransaction = conexion.BeginTransaction()
+
+                Try
+
+                    Dim filasAfectadas As Integer
+
+                    Using comando As New SqlCommand(query, conexion, transaccion)
+
+                        comando.Parameters.Add("@IdCliente", SqlDbType.Int).Value = ClienteActualizado.IdCliente
+                        comando.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value = ClienteActualizado.Nombre
+                        comando.Parameters.Add("@Apellido", SqlDbType.VarChar, 50).Value = ClienteActualizado.Apellido
+                        comando.Parameters.Add("@Correo", SqlDbType.VarChar, 150).Value = ClienteActualizado.Correo
+                        comando.Parameters.Add("@Telefono", SqlDbType.VarChar, 35).Value = If(String.IsNullOrWhiteSpace(ClienteActualizado.Telefono), CType(DBNull.Value, Object), ClienteActualizado.Telefono)
+
+                        filasAfectadas = comando.ExecuteNonQuery()
+
+                    End Using
+
+                    If filasAfectadas <> 1 Then
+                        Throw New InvalidOperationException("No se pudo actualizar el cliente.")
+                    End If
+
+                    BitacoraDAO.RegistrarAccion(
+                    idUsuario,
+                    nombreUsuario,
+                    ClienteActualizado.IdCliente,
+                    "ACTUALIZAR",
+                    conexion,
+                    transaccion
+                )
+
+                    transaccion.Commit()
+
+                Catch
+                    transaccion.Rollback()
+                    Throw
+                End Try
+
             End Using
+
         End Using
+
     End Sub
 
 

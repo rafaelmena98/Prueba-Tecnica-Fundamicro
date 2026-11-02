@@ -68,6 +68,51 @@ Partial Public Class Clientes
     Protected WithEvents btnGuardar As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
+    '''btnCerrarSesion control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnCerrarSesion As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''rfvNombre control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents rfvNombre As Global.System.Web.UI.WebControls.RequiredFieldValidator
+
+    '''<summary>
+    '''rfvApellido control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents rfvApellido As Global.System.Web.UI.WebControls.RequiredFieldValidator
+
+    '''<summary>
+    '''rfvCorreo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents rfvCorreo As Global.System.Web.UI.WebControls.RequiredFieldValidator
+
+    '''<summary>
+    '''revCorreo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents revCorreo As Global.System.Web.UI.WebControls.RegularExpressionValidator
+
+    '''<summary>
     '''gvClientes control.
     '''</summary>
     '''<remarks>

@@ -7,10 +7,10 @@ SQLQuery*.sql
 *.userosscache
 
 # Compilacion
-bin/
-obj/
-Debug/
-Release/
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
 
 # Paquetes temporales
 packages/

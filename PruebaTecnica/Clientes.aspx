@@ -14,29 +14,86 @@
         <asp:TextBox
             ID="txtNombre"
             runat="server"
+            MaxLength="100"
             placeholder="Nombre" />
 
         <asp:TextBox
             ID="txtApellido"
             runat="server"
+            MaxLength="100"
             placeholder="Apellido" />
 
         <asp:TextBox
             ID="txtCorreo"
             runat="server"
             TextMode="Email"
+            MaxLength="150"
             placeholder="Correo" />
 
         <asp:TextBox
             ID="txtTelefono"
             runat="server"
+            MaxLength="35"
             placeholder="Teléfono" />
 
         <asp:Button
             ID="btnGuardar"
             runat="server"
             Text="Guardar Cliente"
+            ValidationGroup="GuardarCliente"
             OnClick="btnGuardar_Click" />
+
+        <asp:Button
+            ID="btnCerrarSesion"
+            runat="server"
+            Text="Cerrar sesión"
+            CausesValidation="False"
+            OnClick="btnCerrarSesion_Click" />
+
+        <br /><br />
+
+        <asp:RequiredFieldValidator
+            ID="rfvNombre"
+            runat="server"
+            ControlToValidate="txtNombre"
+            ValidationGroup="GuardarCliente"
+            ErrorMessage="El nombre es obligatorio."
+            ForeColor="Red"
+            Display="Dynamic" />
+
+        <br />
+
+        <asp:RequiredFieldValidator
+            ID="rfvApellido"
+            runat="server"
+            ControlToValidate="txtApellido"
+            ValidationGroup="GuardarCliente"
+            ErrorMessage="El apellido es obligatorio."
+            ForeColor="Red"
+            Display="Dynamic" />
+
+        <br />
+
+        <asp:RequiredFieldValidator
+            ID="rfvCorreo"
+            runat="server"
+            ControlToValidate="txtCorreo"
+            ValidationGroup="GuardarCliente"
+            ErrorMessage="El correo es obligatorio."
+            ForeColor="Red"
+            Display="Dynamic" />
+
+        <br />
+
+        <asp:RegularExpressionValidator
+            ID="revCorreo"
+            runat="server"
+            ControlToValidate="txtCorreo"
+            ValidationGroup="GuardarCliente"
+            ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+            ErrorMessage="Ingrese un correo electrónico válido."
+            ForeColor="Red"
+            Display="Dynamic" />
 
         <hr />
 
@@ -86,7 +143,8 @@
                     UpdateText="Actualizar"
                     CancelText="Cancelar"
                     DeleteText="Eliminar"
-                    HeaderText="Acciones" />
+                    HeaderText="Acciones"
+                    CausesValidation="False" />
             </Columns>
 
         </asp:GridView>
